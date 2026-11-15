@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;      // ← NUEVO
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -6,7 +6,7 @@ using Clinica.Models;
 
 namespace Clinica.Controllers
 {
-    [Authorize]                                 // ← NUEVO: sin sesión no se entra a ninguna acción...
+    [Authorize(Roles = "Director")]             // ← CAMBIO: solo el Director entra a las acciones...
     public class MedicosController : Controller
     {
         private readonly ClinicaContext _context;
@@ -17,7 +17,7 @@ namespace Clinica.Controllers
         }
 
         // GET: Medicos
-        [AllowAnonymous]                        // ← NUEVO: ...salvo a la lista
+        [AllowAnonymous]                        // ...salvo a la lista, que la ve cualquiera
         public async Task<IActionResult> Index()
         {
             var medicos = _context.Medico.Include(m => m.Especialidad);
@@ -25,7 +25,7 @@ namespace Clinica.Controllers
         }
 
         // GET: Medicos/Details/5
-        [AllowAnonymous]                        // ← NUEVO: ...y al detalle
+        [AllowAnonymous]                        // ...y al detalle, que también lo ve cualquiera
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
@@ -38,14 +38,14 @@ namespace Clinica.Controllers
             return View(medico);
         }
 
-        // GET: Medicos/Create
+        // GET: Medicos/Create  (solo Director)
         public IActionResult Create()
         {
             CargarEspecialidades();
             return View();
         }
 
-        // POST: Medicos/Create
+        // POST: Medicos/Create  (solo Director)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Nombre,NumeroLicencia,AniosExperiencia,EspecialidadId")] Medico medico)
@@ -60,7 +60,7 @@ namespace Clinica.Controllers
             return View(medico);
         }
 
-        // GET: Medicos/Edit/5
+        // GET: Medicos/Edit/5  (solo Director)
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -72,7 +72,7 @@ namespace Clinica.Controllers
             return View(medico);
         }
 
-        // POST: Medicos/Edit/5
+        // POST: Medicos/Edit/5  (solo Director)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,NumeroLicencia,AniosExperiencia,EspecialidadId")] Medico medico)
@@ -97,7 +97,7 @@ namespace Clinica.Controllers
             return View(medico);
         }
 
-        // GET: Medicos/Delete/5
+        // GET: Medicos/Delete/5  (solo Director)
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -110,7 +110,7 @@ namespace Clinica.Controllers
             return View(medico);
         }
 
-        // POST: Medicos/Delete/5
+        // POST: Medicos/Delete/5  (solo Director)
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

@@ -1,8 +1,9 @@
-
+using Microsoft.AspNetCore.Authorization;      // ← NUEVO
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Clinica.Models;
 
+[Authorize(Roles = "Director")]                 // ← NUEVO: solo el Director entra a las acciones...
 public class EspecialidadesController : Controller
 {
     private readonly ClinicaContext _context;
@@ -12,13 +13,15 @@ public class EspecialidadesController : Controller
         _context = context;
     }
 
-    // GET: ESPECIALIDADS
-    public async Task<IActionResult> Index()    
+    // GET: Especialidades
+    [AllowAnonymous]                            // ← NUEVO: ...salvo a la lista
+    public async Task<IActionResult> Index()
     {
         return View(await _context.Especialidad.ToListAsync());
     }
 
-    // GET: ESPECIALIDADS/Details/5
+    // GET: Especialidades/Details/5
+    [AllowAnonymous]                            // ← NUEVO: ...y al detalle
     public async Task<IActionResult> Details(int? id)
     {
         if (id == null)
@@ -36,15 +39,13 @@ public class EspecialidadesController : Controller
         return View(especialidad);
     }
 
-    // GET: ESPECIALIDADS/Create
+    // GET: Especialidades/Create  (solo Director)
     public IActionResult Create()
     {
         return View();
     }
 
-    // POST: ESPECIALIDADS/Create
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+    // POST: Especialidades/Create  (solo Director)
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create([Bind("Id,Nombre,Descripcion")] Especialidad especialidad)
@@ -58,7 +59,7 @@ public class EspecialidadesController : Controller
         return View(especialidad);
     }
 
-    // GET: ESPECIALIDADS/Edit/5
+    // GET: Especialidades/Edit/5  (solo Director)
     public async Task<IActionResult> Edit(int? id)
     {
         if (id == null)
@@ -74,9 +75,7 @@ public class EspecialidadesController : Controller
         return View(especialidad);
     }
 
-    // POST: ESPECIALIDADS/Edit/5
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+    // POST: Especialidades/Edit/5  (solo Director)
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int? id, [Bind("Id,Nombre,Descripcion")] Especialidad especialidad)
@@ -109,7 +108,7 @@ public class EspecialidadesController : Controller
         return View(especialidad);
     }
 
-    // GET: ESPECIALIDADS/Delete/5
+    // GET: Especialidades/Delete/5  (solo Director)
     public async Task<IActionResult> Delete(int? id)
     {
         if (id == null)
@@ -127,7 +126,7 @@ public class EspecialidadesController : Controller
         return View(especialidad);
     }
 
-    // POST: ESPECIALIDADS/Delete/5
+    // POST: Especialidades/Delete/5  (solo Director)
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int? id)

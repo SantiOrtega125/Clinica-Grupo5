@@ -6,9 +6,12 @@
 
 <h1>Directorio de médicos</h1>
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">Registrar médico</a>
-</p>
+@if (User.IsInRole("Director"))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Registrar médico</a>
+    </p>
+}
 <table class="table">
     <thead>
         <tr>
@@ -44,9 +47,14 @@
                     @Html.DisplayFor(model => item.Especialidad!.Nombre)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Detalles</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
+                    <a asp-action="Details" asp-route-id="@item.Id">Detalles</a>
+                    @if (User.IsInRole("Director"))
+                    {
+                        <span> | </span>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Editar</a>
+                        <span> | </span>
+                        <a asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
+                    }
                 </td>
             </tr>
         }

@@ -8,14 +8,21 @@ var connectionString = builder.Configuration.GetConnectionString("ClinicaContext
 
 builder.Services.AddDbContext<ClinicaContext>(options => options.UseSqlServer(connectionString));
 
-// Identity: usuarios guardados en ClinicaContext, sin confirmación de correo
+// Identity con roles: usuarios y roles guardados en ClinicaContext, sin confirmación de correo
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
+    .AddRoles<IdentityRole>()                     // ← FASE 5 (paso 13): activa los roles. Va ANTES de AddEntityFrameworkStores
     .AddEntityFrameworkStores<ClinicaContext>();
 
 builder.Services.AddControllersWithViews();
-builder.Services.AddRazorPages();                 // CAMBIO 2
+builder.Services.AddRazorPages();
 
 var app = builder.Build();
+
+// ← FASE 5 (pasos 14 y 15): crear roles y usuarios de prueba al iniciar la aplicación
+using (var scope = app.Services.CreateScope())
+{
+    await DatosIniciales.CrearRolesYUsuariosAsync(scope.ServiceProvider);
+}
 
 if (!app.Environment.IsDevelopment())
 {
@@ -26,8 +33,8 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
-app.UseAuthentication();                          // CAMBIO 3: lee la cookie de sesión
-app.UseAuthorization();
+app.UseAuthentication();   // lee la cookie de sesión (y los roles que trae)
+app.UseAuthorization();    // aplica [Authorize]
 
 app.MapStaticAssets();
 
@@ -36,6 +43,6 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
-app.MapRazorPages();                              // CAMBIO 4: activa las páginas de login y registro
+app.MapRazorPages();       // activa las páginas de login y registro
 
 app.Run();
