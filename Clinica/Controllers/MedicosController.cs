@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;      // ← NUEVO
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -5,6 +6,7 @@ using Clinica.Models;
 
 namespace Clinica.Controllers
 {
+    [Authorize]                                 // ← NUEVO: sin sesión no se entra a ninguna acción...
     public class MedicosController : Controller
     {
         private readonly ClinicaContext _context;
@@ -15,6 +17,7 @@ namespace Clinica.Controllers
         }
 
         // GET: Medicos
+        [AllowAnonymous]                        // ← NUEVO: ...salvo a la lista
         public async Task<IActionResult> Index()
         {
             var medicos = _context.Medico.Include(m => m.Especialidad);
@@ -22,6 +25,7 @@ namespace Clinica.Controllers
         }
 
         // GET: Medicos/Details/5
+        [AllowAnonymous]                        // ← NUEVO: ...y al detalle
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
