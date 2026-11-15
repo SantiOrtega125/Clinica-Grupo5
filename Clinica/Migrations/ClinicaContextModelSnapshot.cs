@@ -53,6 +53,9 @@ namespace Clinica.Migrations
                     b.Property<int>("AniosExperiencia")
                         .HasColumnType("int");
 
+                    b.Property<int>("EspecialidadId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -65,7 +68,25 @@ namespace Clinica.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("EspecialidadId");
+
                     b.ToTable("Medico");
+                });
+
+            modelBuilder.Entity("Clinica.Models.Medico", b =>
+                {
+                    b.HasOne("Clinica.Models.Especialidad", "Especialidad")
+                        .WithMany("Medicos")
+                        .HasForeignKey("EspecialidadId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Especialidad");
+                });
+
+            modelBuilder.Entity("Clinica.Models.Especialidad", b =>
+                {
+                    b.Navigation("Medicos");
                 });
 #pragma warning restore 612, 618
         }

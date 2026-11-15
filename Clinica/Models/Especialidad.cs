@@ -14,5 +14,8 @@ namespace Clinica.Models
         [Display(Name = "Descripción")]
         [StringLength(250, ErrorMessage = "La descripción no puede superar los 250 caracteres.")]
         public string? Descripcion { get; set; }
+
+        // Una especialidad tiene muchos médicos
+        public ICollection<Medico> Medicos { get; set; } = new List<Medico>();
     }
 }
