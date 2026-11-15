@@ -1,149 +1,135 @@
-
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Clinica.Models;
 
-public class MedicosController : Controller
+namespace Clinica.Controllers
 {
-    private readonly ClinicaContext _context;
-
-    public MedicosController(ClinicaContext context)
+    public class MedicosController : Controller
     {
-        _context = context;
-    }
+        private readonly ClinicaContext _context;
 
-    // GET: MEDICOS
-    public async Task<IActionResult> Index()    
-    {
-        return View(await _context.Medico.ToListAsync());
-    }
-
-    // GET: MEDICOS/Details/5
-    public async Task<IActionResult> Details(int? id)
-    {
-        if (id == null)
+        public MedicosController(ClinicaContext context)
         {
-            return NotFound();
+            _context = context;
         }
 
-        var medico = await _context.Medico
-            .FirstOrDefaultAsync(m => m.Id == id);
-        if (medico == null)
+        // GET: Medicos
+        public async Task<IActionResult> Index()
         {
-            return NotFound();
+            var medicos = _context.Medico.Include(m => m.Especialidad);
+            return View(await medicos.ToListAsync());
         }
 
-        return View(medico);
-    }
-
-    // GET: MEDICOS/Create
-    public IActionResult Create()
-    {
-        return View();
-    }
-
-    // POST: MEDICOS/Create
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Id,Nombre,NumeroLicencia,AniosExperiencia")] Medico medico)
-    {
-        if (ModelState.IsValid)
+        // GET: Medicos/Details/5
+        public async Task<IActionResult> Details(int? id)
         {
-            _context.Add(medico);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-        return View(medico);
-    }
+            if (id == null) return NotFound();
 
-    // GET: MEDICOS/Edit/5
-    public async Task<IActionResult> Edit(int? id)
-    {
-        if (id == null)
-        {
-            return NotFound();
+            var medico = await _context.Medico
+                .Include(m => m.Especialidad)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (medico == null) return NotFound();
+
+            return View(medico);
         }
 
-        var medico = await _context.Medico.FindAsync(id);
-        if (medico == null)
+        // GET: Medicos/Create
+        public IActionResult Create()
         {
-            return NotFound();
-        }
-        return View(medico);
-    }
-
-    // POST: MEDICOS/Edit/5
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int? id, [Bind("Id,Nombre,NumeroLicencia,AniosExperiencia")] Medico medico)
-    {
-        if (id != medico.Id)
-        {
-            return NotFound();
+            CargarEspecialidades();
+            return View();
         }
 
-        if (ModelState.IsValid)
+        // POST: Medicos/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("Id,Nombre,NumeroLicencia,AniosExperiencia,EspecialidadId")] Medico medico)
         {
-            try
+            if (ModelState.IsValid)
             {
-                _context.Update(medico);
+                _context.Add(medico);
                 await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
-            catch (DbUpdateConcurrencyException)
+            CargarEspecialidades(medico.EspecialidadId);
+            return View(medico);
+        }
+
+        // GET: Medicos/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var medico = await _context.Medico.FindAsync(id);
+            if (medico == null) return NotFound();
+
+            CargarEspecialidades(medico.EspecialidadId);
+            return View(medico);
+        }
+
+        // POST: Medicos/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,NumeroLicencia,AniosExperiencia,EspecialidadId")] Medico medico)
+        {
+            if (id != medico.Id) return NotFound();
+
+            if (ModelState.IsValid)
             {
-                if (!MedicoExists(medico.Id))
+                try
                 {
-                    return NotFound();
+                    _context.Update(medico);
+                    await _context.SaveChangesAsync();
                 }
-                else
+                catch (DbUpdateConcurrencyException)
                 {
+                    if (!MedicoExists(medico.Id)) return NotFound();
                     throw;
                 }
+                return RedirectToAction(nameof(Index));
+            }
+            CargarEspecialidades(medico.EspecialidadId);
+            return View(medico);
+        }
+
+        // GET: Medicos/Delete/5
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var medico = await _context.Medico
+                .Include(m => m.Especialidad)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (medico == null) return NotFound();
+
+            return View(medico);
+        }
+
+        // POST: Medicos/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var medico = await _context.Medico.FindAsync(id);
+            if (medico != null)
+            {
+                _context.Medico.Remove(medico);
+                await _context.SaveChangesAsync();
             }
             return RedirectToAction(nameof(Index));
         }
-        return View(medico);
-    }
 
-    // GET: MEDICOS/Delete/5
-    public async Task<IActionResult> Delete(int? id)
-    {
-        if (id == null)
+        private bool MedicoExists(int id)
         {
-            return NotFound();
+            return _context.Medico.Any(e => e.Id == id);
         }
 
-        var medico = await _context.Medico
-            .FirstOrDefaultAsync(m => m.Id == id);
-        if (medico == null)
+        // Llena la lista desplegable: guarda el Id y muestra el Nombre
+        private void CargarEspecialidades(object? seleccionada = null)
         {
-            return NotFound();
+            ViewData["EspecialidadId"] = new SelectList(
+                _context.Especialidad.OrderBy(e => e.Nombre), "Id", "Nombre", seleccionada);
         }
-
-        return View(medico);
-    }
-
-    // POST: MEDICOS/Delete/5
-    [HttpPost, ActionName("Delete")]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(int? id)
-    {
-        var medico = await _context.Medico.FindAsync(id);
-        if (medico != null)
-        {
-            _context.Medico.Remove(medico);
-        }
-
-        await _context.SaveChangesAsync();
-        return RedirectToAction(nameof(Index));
-    }
-
-    private bool MedicoExists(int? id)
-    {
-        return _context.Medico.Any(e => e.Id == id);
     }
 }
