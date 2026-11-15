@@ -1,8 +1,304 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Inicio";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<style>
+    .inicio {
+        font-family: 'Segoe UI', sans-serif;
+        color: #1e293b;
+    }
+
+    .bienvenida {
+        background: linear-gradient(135deg, #14243d, #29466f);
+        color: white;
+        padding: 65px 45px;
+        border-radius: 16px;
+        margin-top: 25px;
+        margin-bottom: 45px;
+    }
+
+    .bienvenida h1 {
+        font-size: 38px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .bienvenida p {
+        font-size: 17px;
+        color: #dbeafe;
+        max-width: 650px;
+        line-height: 1.8;
+    }
+
+    .etiqueta {
+        color: #93c5fd;
+        font-size: 13px;
+        font-weight: bold;
+        letter-spacing: 2px;
+    }
+
+    .botones {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+        flex-wrap: wrap;
+    }
+
+    .boton {
+        background: #3b82f6;
+        color: white;
+        padding: 12px 25px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+
+    .boton:hover {
+        background: #2563eb;
+        color: white;
+    }
+
+    .boton-secundario {
+        background: transparent;
+        border: 1px solid #93c5fd;
+    }
+
+    .boton-secundario:hover {
+        background: white;
+        color: #14243d;
+    }
+
+    .titulo-seccion {
+        text-align: center;
+        margin-bottom: 35px;
+    }
+
+    .titulo-seccion h2 {
+        font-weight: bold;
+        font-size: 29px;
+    }
+
+    .titulo-seccion p {
+        color: #64748b;
+    }
+
+    .tarjetas {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 25px;
+        margin-bottom: 45px;
+    }
+
+    .tarjeta {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 30px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        transition: 0.3s;
+    }
+
+    .tarjeta:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.10);
+    }
+
+    .icono-tarjeta {
+        width: 55px;
+        height: 55px;
+        background: #dbeafe;
+        color: #1d4ed8;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 23px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .tarjeta h3 {
+        font-size: 22px;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+
+    .tarjeta p {
+        color: #64748b;
+        line-height: 1.7;
+    }
+
+    .tarjeta a {
+        color: #2563eb;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .tarjeta a:hover {
+        text-decoration: underline;
+    }
+
+    .acceso {
+        background: #f1f5f9;
+        border-radius: 14px;
+        padding: 40px 25px;
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .acceso h2 {
+        font-size: 25px;
+        font-weight: bold;
+    }
+
+    .acceso p {
+        color: #64748b;
+        margin: 15px 0 25px;
+    }
+
+    .rol {
+        display: inline-block;
+        background: #dbeafe;
+        color: #1d4ed8;
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-weight: 600;
+    }
+
+    @@media (max-width: 768px) {
+        .bienvenida {
+            padding: 40px 25px;
+        }
+
+        .bienvenida h1 {
+            font-size: 28px;
+        }
+
+        .tarjetas {
+            grid-template-columns: 1fr;
+        }
+
+        .botones {
+            flex-direction: column;
+        }
+
+        .boton {
+            text-align: center;
+        }
+    }
+</style>
+
+<div class="inicio">
+
+    <section class="bienvenida">
+        <span class="etiqueta">SISTEMA DE GESTIÓN</span>
+
+        <h1>Bienvenido a nuestro sistema</h1>
+
+        <p>
+            Plataforma web diseñada para facilitar
+            la administración y consulta de información
+            de manera segura, rápida y organizada.
+        </p>
+
+        <div class="botones">
+            <a asp-controller="Medicos"
+               asp-action="Index"
+               class="boton">
+                Ver médicos
+            </a>
+
+            <a asp-controller="Especialidades"
+               asp-action="Index"
+               class="boton boton-secundario">
+                Ver especialidades
+            </a>
+        </div>
+    </section>
+
+    <section>
+        <div class="titulo-seccion">
+            <h2>Módulos del sistema</h2>
+            <p>
+                Selecciona el módulo que deseas consultar.
+            </p>
+        </div>
+
+        <div class="tarjetas">
+
+            <div class="tarjeta">
+                <div class="icono-tarjeta">01</div>
+
+                <h3>Médicos</h3>
+
+                <p>
+                    Consulta la información de los médicos,
+                    sus números de licencia, años de
+                    experiencia y especialidades.
+                </p>
+
+                <a asp-controller="Medicos"
+                   asp-action="Index">
+                    Ver médicos &rarr;
+                </a>
+            </div>
+
+            <div class="tarjeta">
+                <div class="icono-tarjeta">02</div>
+
+                <h3>Especialidades</h3>
+
+                <p>
+                    Visualiza las diferentes especialidades
+                    médicas registradas y sus descripciones.
+                </p>
+
+                <a asp-controller="Especialidades"
+                   asp-action="Index">
+                    Ver especialidades &rarr;
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="acceso">
+
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <h2>Sesión iniciada</h2>
+
+            <p>
+                Bienvenido, @User.Identity.Name.
+                Puedes acceder a los módulos disponibles.
+            </p>
+
+            @if (User.IsInRole("Director"))
+            {
+                <span class="rol">Rol: Director</span>
+            }
+            else if (User.IsInRole("Paciente"))
+            {
+                <span class="rol">Rol: Paciente</span>
+            }
+        }
+        else
+        {
+            <h2>Accede a tu cuenta</h2>
+
+            <p>
+                Inicia sesión para acceder a las funciones
+                disponibles según tu rol.
+            </p>
+
+            <a asp-area="Identity"
+               asp-page="/Account/Login"
+               class="boton">
+                Iniciar sesión
+            </a>
+        }
+
+    </section>
+
 </div>
