@@ -4,47 +4,107 @@
     ViewData["Title"] = "Especialidades";
 }
 
-<h1>Especialidades</h1>
+<style>
+    .encabezado {
+        background: linear-gradient(135deg, #14243d, #29466f);
+        color: white;
+        padding: 35px;
+        border-radius: 12px;
+        margin: 25px 0;
+    }
 
-@if (User.IsInRole("Director"))
-{
-    <p>
-        <a asp-action="Create" class="btn btn-primary">Registrar especialidad</a>
-    </p>
-}
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Nombre)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Descripcion)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(model => item.Nombre)
-                </td>
-                <td>
-                    @Html.DisplayFor(model => item.Descripcion)
-                </td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@item.Id">Detalles</a>
-                    @if (User.IsInRole("Director"))
-                    {
-                        <span> | </span>
-                        <a asp-action="Edit" asp-route-id="@item.Id">Editar</a>
-                        <span> | </span>
-                        <a asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
-                    }
-                </td>
-            </tr>
+    .panel {
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px #0001;
+    }
+
+    .table th {
+        background: #edf2f7;
+        color: #334155;
+    }
+
+    .table td, .table th {
+        padding: 15px;
+        vertical-align: middle;
+    }
+
+    .table tbody tr:hover {
+        background: #f8fafc;
+    }
+
+    .acciones a {
+        margin: 3px;
+    }
+
+    @@media (max-width: 768px) {
+        .encabezado {
+            padding: 22px;
         }
-    </tbody>
-</table>
+
+        .panel {
+            padding: 15px;
+        }
+    }
+</style>
+
+<div class="container">
+    <div class="encabezado">
+        <h1>Especialidades médicas</h1>
+        <p class="mb-0">
+            Consulta y administra las especialidades de la clínica.
+        </p>
+    </div>
+
+    <div class="panel">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <h4 class="fw-bold m-0">Especialidades registradas</h4>
+
+            @if (User.IsInRole("Director"))
+            {
+                <a asp-action="Create" class="btn btn-primary">
+                    + Registrar especialidad
+                </a>
+            }
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="fw-semibold">@item.Nombre</td>
+                            <td>@item.Descripcion</td>
+                            <td class="acciones">
+                                <a asp-action="Details" asp-route-id="@item.Id"
+                                   class="btn btn-info btn-sm">Detalles</a>
+
+                                @if (User.IsInRole("Director"))
+                                {
+                                    <a asp-action="Edit" asp-route-id="@item.Id"
+                                       class="btn btn-warning btn-sm">Editar</a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id"
+                                       class="btn btn-danger btn-sm">Eliminar</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <p class="text-muted mt-3 mb-0">
+            Total de especialidades: <strong>@Model.Count()</strong>
+        </p>
+    </div>
+</div>
